@@ -40,7 +40,7 @@ def index_cite():
 
 @app.route('/program')
 def program_page():
-    return render_template('contact.html')
+    return render_template('program.html')
 
 @app.route('/speakers')
 def speakers_page():
