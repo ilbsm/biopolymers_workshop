@@ -44,7 +44,11 @@ def program_page():
 
 @app.route('/speakers')
 def speakers_page():
-    return render_template('contact.html')
+    return render_template('speakers.html')
+
+@app.route('/organizers')
+def organizers_page():
+    return render_template('organizers.html')
 
 @app.route('/practical')
 def practical_info():
