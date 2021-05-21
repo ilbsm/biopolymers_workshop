@@ -1,0 +1,113 @@
+div.knotoid_matrix_block {
+	float: left;
+	width: 50%;
+}
+div.knotoid_matrix {
+    position: relative;
+    width: 550px;
+}
+div.knotoid_figure {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 550px;
+    height: auto;
+}
+div#infoDiv {
+    display: none;
+    position: absolute;
+    width: 245px;
+    top: 80px;
+    left: 250px;
+    z-index: 10;
+    padding-bottom: 0px;
+    padding-top: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background: #edf7ff;
+    border: solid 2px #337ab7;
+    border-radius: 5px;
+}
+div#infoDiv span.propname {
+    font-weight: bold;
+}
+div#infoDiv div.alert {
+    font-weight: bold;
+    position: absolute;
+    top: 30px;
+    left: 120px;
+}
+
+div#infoDiv div.alert p{
+    text-align: center;
+}
+
+div#infoDiv div.alert span{
+    color: #ff0000;
+}
+#first_figure {
+    opacity: 1.0;
+    filter: alpha(opacity=100); /* For IE8 and earlier */
+}
+#second_figure {
+    opacity: 0.0;
+    filter: alpha(opacity=0); /* For IE8 and earlier */
+}
+input[type=range][orient=vertical]
+{
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 8px;
+    height: 300px;
+}
+tr.covalent{background-color:#fcf8e3}
+tr.covalent:hover{background-color:#fcf4ca}
+tr.ion-based{background-color:#dff0d8}
+tr.ion-based:hover{background-color:#cef0c0}
+tr.probabilistic{background-color:#d9edf7}
+tr.probabilistic:hover{background-color:#c4e3f3}
+
+i.color-deterministic {
+    /*color: #fcf8e3;*/
+    color: #fcec91;
+}
+
+i.color-cov_ion {
+    /*color: #dff0d8;*/
+    color: #b2f09b;
+}
+
+i.color-probab { /* No Closure */
+    color: #d9edf7;
+}
+
+.ion_interaction{position:relative;font-weight:bold;display:inline-block;}
+.ion_interaction:hover .interactiontooltip {visibility: visible;}
+.closure_interaction{position:relative;font-weight:bold;display:inline-block;color:#337ab7;}
+.closure_interaction:hover .interactiontooltip {visibility: visible;}
+
+.interactiontooltip{font-weight: normal;
+    visibility: hidden;
+    width: 100px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -60px;
+    }
+
+.interactiontooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+    }

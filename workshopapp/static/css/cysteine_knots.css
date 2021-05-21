@@ -1,0 +1,19 @@
+
+
+span.cysteine_loop_bgcolor {
+    background: #d9edf7;
+}
+
+span.cysteine_bridge_bgcolor {
+    background: #ffff00;
+}
+
+span.cysteine_piercing_bgcolor{
+    background: #ff0000;
+}
+
+div.view-main-pane div {
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+}

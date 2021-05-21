@@ -1,0 +1,201 @@
+{% extends "index.html" %}
+
+{% block header %}
+<style>
+.chart {
+  font: 10px sans-serif;
+  width: 560px
+  }
+  .grid .tick {
+    stroke: black;//lightgrey;
+    stroke-width: 0.1;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.area {
+    fill: #d9edf7;
+    opacity: 0.8;
+}
+.areaS {
+    fill: #0078c0;
+    opacity: 0.8;
+}
+</style>
+{% endblock %}
+{% block body %}
+<div class=container>
+    <p class="text-justify">The protein topology database <strong>KnotProt</strong> collects information about protein structures with open polypeptide chains forming knots or slipknots.  The knotting complexity of the catalogued proteins is presented in the form of a matrix diagram (introduced in <a href="http://www.ncbi.nlm.nih.gov/pubmed/22685208" target=_blank><i class="fa fa-external-link"></i> this <span class="capital">pnas</span> paper</a>) that shows users the knot type of the entire polypeptide chain and of each of its subchains. The pattern visible in the matrix gives the knotting fingerprint of a given protein and permits users to determine, for example, the minimal length of the knotted regions (knots’ core size) or the depth of a knot, i.e. how many aminoacids can be removed from either end of the catalogued protein structure before converting it from a knot to a different type of knot. In addition, the database presents extensive information about the biological function of proteins with non-trivial knotting and the families and fold types of these proteins. As an additional feature, the KnotProt database enables users to submit protein or polymer structures and generate their knotting fingerprints.
+The data currently deposited in this database is summarized in <a href="{{url_for('index_about')}}"><i class="fa fa-external-link"></i>  database statistics</a>.</p>
+
+
+
+    <div class="row">
+           <div class="col-sm-4 col-md-4">
+    <img src="{{url_for("static",filename="img/S3141.png")}}" alt="Example of a topological fingerprint with a slipknot motif denoted S31,41,31 detected in a protein." class="img-responsive img-rounded thumbnail">
+    <div class="caption">
+        Example of a topological fingerprint with a slipknot         motif denoted S3<sub>1</sub>,4<sub>1</sub>,3<sub>1</sub> detected in a protein.
+    </div>
+</div>
+           <div class="col-sm-4 col-md-4">
+               <center><div id="chart" class="chart img-thumbnail"></div></center>
+               <div class="caption">Number of (slip)knotted chains deposited in the PDB and KnotProt databases.</div>
+</div>
+           <div class="col-sm-4 col-md-4">
+    <img src="{{url_for("static",filename="img/Sfigure2_introduction_rmsd.png")}}" alt="" class="img-responsive img-rounded thumbnail">
+    <div class="caption">
+        <strong> F(Q) Plot</strong>
+        Example of evaluation of data obtained from the webserver, based on time evolution of an artificial knot. The figure shows two-dimensional free energy landscape of knotted proteins, measured by the fraction of native contacts formed Q and RMSD. The black curve shows the contour of knot probability obtained from time dependent protein coordinates (based on results in <a href=http://www.pnas.org/content/early/2012/08/06/1201804109><i class="fa fa-external-link"></i> this <span class="capital">pnas</span> paper</a>).
+    </div>
+        </div>
+</div>
+    <p class="text-justify">The KnotProt can be used also as a server to analyze time evolution of knots and slipknots (uploaded as entire trajectories). Moreover, it can detect complexity in open chains which are not deposited in the <span class="capital"><a href="http://www.rcsb.org">rcsb pdb</a></span>.</p>
+
+<hr>
+<h4>Authors</h4>
+<p class="text-justify">This database has been created in a joint collaboration between:  Michał Jamróz (<i>University of Warsaw, Faculty of Chemistry</i>), Wanda Niemyska (<i>University of Silesia, Institute of Mathematics</i>), Eric Rawdon (<i>University of St. Thomas, Saint Paul, Department of Mathematics</i>), Andrzej Stasiak (<i>University of Lausanne, Center for Integrative Genomics</i>), Ken Millett (<i>University of California, Santa Barbara, Department of Mathematics</i>),  Piotr Sułkowski (<i>University of Warsaw, Faculty of Physics</i>), Joanna Sulkowska  (<i>University of Warsaw, Faculty of Chemistry and Centre of New Technologies</i>).</p>
+
+<p class="text-justify">In the update of the database (KnotProt 2.0), apart from the original authors Pawel Dabrowski-Tumanski (<i>University of Warsaw, Faculty of Chemistry, Centre of New Technologies</i>), Pawel Rubach (<i>Warsaw School of Economics,</i>), Dimoklis Goundaroulis (<i>University of Lausanne, Center for Integrative Genomics and SIB Swiss Institute of Bioinformatics</i>), and Julien Dorier (<i>University of Lausanne, Center for Integrative Genomics and Vital-IT, SIB Swiss Institute of Bioinformatics</i>) took part in creation of the database.</p>
+
+<h4>Funding</h4>
+
+<p class="text-justify">The research leading to creation of this database has been supported by: National Science Center [grant agreement Sonata BIS 2012/07/E/NZ1/01900 to J.S., PRELUDIUM #2016/21/N/NZ1/02848 to P.D.-T.]; Foundation for Polish Science [Homing Plus to J.S., SKILLS/Inter grant agreement 177/UD/SKILLS/2012 co-financed by European Social Fund to P.S., TEAM grant agreement TEAM/2011-7/6, co-financed by the EU European Regional Development Fund operated within the Innovative Economy Operational Program to M.J.]; Ministry of Science and Higher Education [Iuventus Plus programme to P.S.]; National Science Foundation [Division of Mathematical Sciences, #1115722,#1418869 to E.R.]; Swiss National Foundation [31003A_138267 to A.S.], The Leverhulme Trust [RP2013-K-017 to A.S.], and ERC Starting Grant [#335739 to P.S.]. Funding for open access charge: Swiss National Foundation [31003A_138267]. </p>
+</div>
+
+{% endblock %}
+{% block below_js %}
+<script src="{{url_for('static',filename='js/d3.js')}}"></script>
+<script>
+    var now = new Date();
+    var nowY = now.getFullYear();
+    var nowM = now.getMonth();
+    var nowD = now.getDay();
+    var nowString = nowY+"-"+nowM+"-"+nowD;
+    var future = new Date(nowY+2, nowM, nowD, 1,1,1,1);
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 360 - margin.left - margin.right,
+    height = 250 - margin.top - margin.bottom;
+var parseDate = d3.time.format("%Y-%m-%d").parse;
+var x = d3.time.scale()
+    .range([0, width]);
+var y = d3.scale.linear()
+    .range([height, 0]);
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+var area = d3.svg.area()
+    .x(function(d) { return x(d.knotdate); })
+    .y0(height)
+    .y1(function(d) { return y(d.knotcount); });
+var areaS = d3.svg.area()
+    .x(function(d) { return x(d.slipdate); })
+    .y0(height)
+    .y1(function(d) { return y(d.slipcount); });
+
+function make_x_axis() {        
+    return d3.svg.axis()
+        .scale(x)
+         .orient("bottom")
+         .ticks(0)
+}
+
+function make_y_axis() {        
+    return d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(0)
+}
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    d3.json("{{url_for('plot_dates')}}", function(error, data) {
+            var i=1;
+          data[0].push({"date":nowString});
+          data[0].forEach(function(d) {
+            d.knotdate = parseDate(d.date);
+            d.knotcount = i;//+d.count;
+            i=i+1;
+        });
+            var i=1;
+        data[1].push({"date":nowString});
+          data[1].forEach(function(d) {
+            d.slipdate = parseDate(d.date);
+            d.slipcount = i;//+d.count;
+            d.total = i;
+            i=i+1;
+         });
+
+  x.domain([d3.min(data[1], function(d) { return d.slipdate; }),future]);
+  y.domain([0, d3.max(data[0], function(d) { return d.knotcount+150; })]);
+//knots
+  svg.append("path")
+      .datum(data[0])
+      .attr("class", "area")
+      .attr("d", area);
+
+//slipknots
+  svg.append("path")
+      .datum(data[1])
+      .attr("class", "areaS")
+      .attr("d", areaS);
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+svg.append("g")         
+        .attr("class", "grid")
+        .attr("transform", "translate(0," + height + ")")
+        .call(make_x_axis()
+            .tickSize(-height, 0, 0)
+            .tickFormat("")
+        )
+
+    svg.append("g")         
+        .attr("class", "grid")
+        .call(make_y_axis()
+            .tickSize(-width, 0, 0)
+            .tickFormat("")
+        )
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Number of (slip)knotted chains");
+
+
+var legend = svg.selectAll(".legend")
+.data([{color:"#d9edf7",text:"Knotted"},{color:"#0078c0",text:"Slipknotted"}])
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width - 108)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("opacity", 0.8)
+      .style("fill", function(d){return d.color;});
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d.text; });
+
+
+});
+</script>
+{% endblock %}
