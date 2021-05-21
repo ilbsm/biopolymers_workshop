@@ -52,4 +52,4 @@ def organizers_page():
 
 @app.route('/practical')
 def practical_info():
-    return render_template('contact.html')
+    return render_template('practical.html')
